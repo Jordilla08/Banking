@@ -22,16 +22,12 @@ const Home = () => {
           <TotalBalanceBox
             accounts={[]}
             totalBanks={1}
-            totalCurrentBalance={4124.35}
+            totalCurrentBalance={412124.35}
           />
         </header>
         RECENT TRANSACTIONS
       </div>
-      <RightSidebar
-        user={loggedIn}
-        transactions={[]}
-        banks={[{}, {}]}
-      />
+      <RightSidebar user={loggedIn} transactions={[]} banks={[{}, {}]} />
     </section>
   );
 };
