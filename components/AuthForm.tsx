@@ -33,18 +33,33 @@ const AuthForm = ({ type }: { type: string }) => {
   });
 
   // 2. Define a submit handler.
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  const onSubmit = async (data: z.infer<typeof formSchema>) => {
     setIsLoading(true);
-    // ✅ This will be type-safe and validated.
-    console.log(values);
-    setIsLoading(false);
-  }
+
+    try {
+      // Sign up with Appwrite & create plaid link token
+      if(type === "sign-up") {
+        const userData = {
+          firstName: data.firstName,
+        }
+      }
+      if(type === "sign-in") {
+
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsLoading(false);
+  };
 
   return (
     <section className="auth-form">
       <header className="flex flex-col gap-5 md:gap-3">
         <h1 className="text-24 lg:text-36 font-semibold text-gray-900"></h1>
-        <Link href="/" className="cursor-pointer flex items-center gap-1">
+        <Link
+          href="/"
+          className="cursor-pointer flex items-center gap-1"
+        >
           <Image
             src="/icons/logo.svg"
             width={34}
@@ -66,7 +81,10 @@ const AuthForm = ({ type }: { type: string }) => {
       ) : (
         <>
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+            <form
+              onSubmit={form.handleSubmit(onSubmit)}
+              className="space-y-8"
+            >
               {type === "sign-up" && (
                 <>
                   <div className="flex gap-4">
@@ -89,6 +107,12 @@ const AuthForm = ({ type }: { type: string }) => {
                     label="Address"
                     placeholder="Enter your street address"
                   />
+                  <CustomInput
+                      control={form.control}
+                      name="city"
+                      label="City"
+                      placeholder="Enter your city"
+                    />
                   <div className="flex gap-4">
                     <CustomInput
                       control={form.control}
@@ -133,11 +157,18 @@ const AuthForm = ({ type }: { type: string }) => {
               />
 
               <div className="flex flex-col gap-4">
-                <Button type="submit" disabled={isLoading} className="form-btn">
+                <Button
+                  type="submit"
+                  disabled={isLoading}
+                  className="form-btn"
+                >
                   {isLoading ? (
                     <>
-                      <Loader2 size={20} className="animate-spin" /> &nbsp;
-                      Loading...
+                      <Loader2
+                        size={20}
+                        className="animate-spin"
+                      />{" "}
+                      &nbsp; Loading...
                     </>
                   ) : type === "sign-in" ? (
                     "Sign In"
