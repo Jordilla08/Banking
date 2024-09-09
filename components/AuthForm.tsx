@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -23,11 +23,23 @@ import { authFormSchema } from "@/lib/utils";
 import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { getLoggedInUser, signIn, signUp } from "@/lib/actions/user.actions";
+import router from "next/router";
 
 const AuthForm = ({ type }: { type: string }) => {
   const router = useRouter();
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      const loggedInUser = await getLoggedInUser(); // Check if the user is logged in
+      if (loggedInUser) {
+        router.push("/"); // Redirect to the home page if authenticated
+      }
+    };
+    checkAuth();
+  }, [router]);
 
   const formSchema = authFormSchema(type);
 
@@ -58,11 +70,16 @@ const AuthForm = ({ type }: { type: string }) => {
           email: data.email,
           password: data.password,
         });
-
-        if (response) router.push("/");
+        console.log(response); // Inspect response for debugging
+        if (response) {
+          setUser(response);
+          router.push("/"); // Redirect after sign-in
+        } else {
+          setError("Sign-in failed. Please check your credentials.");
+        }
       }
     } catch (error) {
-      console.log(error);
+      setError("An error occurred during sign-in. Please try again.");
     } finally {
       setIsLoading(false);
     }
