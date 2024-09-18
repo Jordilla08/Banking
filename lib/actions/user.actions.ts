@@ -17,7 +17,7 @@ export const getUserInfo = async ({ userId }: getUserInfoProps) => {
 
     // return parseStringify(user.documents[0]);
   } catch (error) {
-    console.log(error);
+    console.error("Error fetching user info:", error);
   }
 };
 
@@ -26,6 +26,12 @@ export const signIn = async ({ email, password }: signInProps) => {
     const { account } = await createAdminClient();
 
     const response = await account.createEmailPasswordSession(email, password);
+    cookies().set("appwrite-session", response.secret, {
+      path: "/",
+      httpOnly: true,
+      sameSite: "strict",
+      secure: true,
+    });
 
     return parseStringify(response);
   } catch (error) {
